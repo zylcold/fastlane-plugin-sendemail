@@ -26,7 +26,7 @@ module Fastlane
         EOF
         File.write("sketch.html", msg)
         puts "mail -s '#{params[:subject]}\nContent-Type: text/html' #{params[:send_list]} < sketch.html"
-        system "mail -s '#{params[:subject]}\nContent-Type: text/html' #{params[:send_list]} < sketch.html"
+        File.delete( "sketch.html" ) if system "mail -s '#{params[:subject]}\nContent-Type: text/html' #{params[:send_list]} < sketch.html"
       end
 
       def self.description
