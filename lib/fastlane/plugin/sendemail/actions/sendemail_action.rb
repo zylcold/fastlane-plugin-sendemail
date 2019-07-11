@@ -25,8 +25,8 @@ module Fastlane
 </body>
         EOF
         File.write("sketch.html", msg)
+        puts "mail -s '#{params[:subject]}\nContent-Type: text/html' #{params[:send_list]} < sketch.html"
         system "mail -s '#{params[:subject]}\nContent-Type: text/html' #{params[:send_list]} < sketch.html"
-        # system "mail \“$(echo -e '#{params[:subject]}\nContent-Type: text/html')\" #{params[:send_list]} < hh.html"
       end
 
       def self.description
