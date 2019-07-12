@@ -1,6 +1,6 @@
 require 'fastlane/action'
 require_relative '../helper/sendemail_helper'
-
+require 'rqrcode'
 module Fastlane
   module Actions
     class SendemailAction < Action
@@ -21,7 +21,7 @@ module Fastlane
 　　　<td> 下载 </td>　　　<td> #{params[:send_app_url]} </td>
 　　</tr>
 　</table>
-    <img src="#{params[:send_app_qcode]}" />
+    <img src="#{getQRCode(params[:send_app_url])}" />
 </body>
         EOF
         File.write("sketch.html", msg)
@@ -53,8 +53,7 @@ module Fastlane
           FastlaneCore::ConfigItem.new(key: :send_app_name, env_name: "SENDEMAIL_SEND_APP_NAME", description: "App名称", optional: false, type: String),
           FastlaneCore::ConfigItem.new(key: :send_app_version, env_name: "SENDEMAIL_SEND_APP_VERSION", description: "App版本", optional: false, type: String),
           FastlaneCore::ConfigItem.new(key: :send_app_commit, env_name: "SENDEMAIL_SEND_APP_COMMIIT", description: "App提交记录", optional: false, type: String),
-          FastlaneCore::ConfigItem.new(key: :send_app_url, env_name: "SENDEMAIL_SEND_APP_URL", description: "AppURL", optional: false, type: String),
-          FastlaneCore::ConfigItem.new(key: :send_app_qcode, env_name: "SENDEMAIL_SEND_APP_QCODE", description: "App QC URL", optional: false, type: String),
+          FastlaneCore::ConfigItem.new(key: :send_app_url, env_name: "SENDEMAIL_SEND_APP_URL", description: "AppURL", optional: false, type: String)
         ]
       end
 
@@ -63,4 +62,19 @@ module Fastlane
       end
     end
   end
+end
+
+def getQRCode(url) 
+  qrcode = RQRCode::QRCode.new(url)
+  png = qrcode.as_png(
+      resize_gte_to: false,
+      resize_exactly_to: false,
+      fill: 'white',
+      color: 'black',
+      size: 200,
+      border_modules: 4,
+      module_px_size: 6,
+      file: nil
+  )
+  return png.to_data_url
 end
